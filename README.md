@@ -1,0 +1,1 @@
+# Exerc-cio-Pr-tico-rvore-de-k-d-k-d-tree-
