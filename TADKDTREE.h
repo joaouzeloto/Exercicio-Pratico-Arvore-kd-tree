@@ -47,8 +47,61 @@ void insereOrd(lTree **a,lTree **b)
 			anterior->prox = *b;
 			aux->ant = *b;
 		}
+	}	
+}
+
+void insereOrdD(lTree **a,lTree *cop,int d)
+{
+	int i;
+	lTree *aux = *a,*anterior=NULL;
+	lTree *novo = (lTree*) malloc(sizeof(lTree));
+	for(i=TF-1;i>-1;i--)
+		novo->cord[i] = cop->cord[i];
+	novo->prox = novo->ant =NULL;
+	if(*a==NULL)
+	{
+		*a = novo;
+	}
+	else
+	{
+		while(aux!=NULL&&aux->cord[d]<novo->cord[d])
+		{
+			anterior = aux;
+			aux = aux->prox;
+		}	
+		if(anterior==NULL)
+		{
+			novo->prox = aux;
+			aux->ant = novo;
+			*a = novo;
+		}
+		else
+		{
+			if(aux==NULL)
+			{
+				anterior->prox = novo;
+				novo->ant = anterior;
+			}
+			else
+			{
+				novo->ant = anterior;
+				novo->prox = aux;
+				anterior->prox = novo;
+				aux->ant = novo;
+			}
+		}	
 	}
 	
+}
+
+void inserePontD(lTree *l,lTree **ori,lTree *limite,int d)
+{
+	lTree *aux = l;
+	while(aux!=NULL&&aux!=limite)
+	{
+		insereOrdD(&*ori,aux,d);
+		aux = aux->prox;
+	}
 }
 
 void inserePont(lTree **l,int x,int y)
@@ -73,7 +126,6 @@ void geraPontos(lTree **l,int nLimite)
 	for(i=0;i<nLimite;i++)
 		inserePont(&*l,sortearNumero(),sortearNumero());
 }
-
 
 kdTree* Cria_no(int xY[TF])
 {
@@ -101,51 +153,59 @@ void insereKdTree(kdTree **raiz,int xY[TF],int n)
 	}
 }
 
-void ordenaList(lTree **l,int n)
+int contL(lTree *l)
 {
-	int d = n%TF,aux[TF],cont=1,i;
-	lTree *conj,*prox;
-	for(conj=*l;conj!=NULL;conj = conj->prox)
-		cont++;
-	for(i=0;i<=cont;i++)
+	int i;
+	for(i=0;l!=NULL;i++)
 	{
-		conj = *l;
-		while(conj!=NULL)
+		l = l->prox;
+	}
+	return i-1;
+}
+
+lTree* achaMeio(lTree *l,int j)
+{
+	int i;
+	for(i=0;i!=j;i++)
+	{
+		l = l->prox;
+	}
+	return l;
+}
+
+void insertBalancedKdTree(kdTree **raiz,lTree *l,int n)
+{
+	int tam = contL(l),d;
+	lTree *meio = achaMeio(l,tam/2),*ladoE=NULL,*ladoD=NULL;
+	if(tam>0)
+	{
+		if(*raiz == NULL)
 		{
-			prox = conj->prox;
-			if(prox!=NULL&&conj->cord[d]>prox->cord[d])
-			{
-				//aux = prox->cord;
-				//prox->cord = conj->cord;
-				//conj->cord = aux;
-			}
-			conj->prox;
+			*raiz = Cria_no(meio->cord);
 		}
+		d = n%TF;
+		inserePontD(l,&ladoE,meio,d); // insere o número restante de pontos da esquerda em outra lista
+		inserePontD(meio->prox,&ladoD,NULL,d); // insere o número restante de pontos da direita em outra lista
+		insertBalancedKdTree(&(*raiz)->esq,ladoE,n+1); 
+		insertBalancedKdTree(&(*raiz)->dir,ladoD,n+1);
+	}
+	else
+	{
+		if(meio!=NULL)
+			*raiz = Cria_no(meio->cord);
 	}
 }
 
-void insereBalanceado(kdTree **raiz,lTree *corden,int a)
+void exibeArv(kdTree *a)
 {
-	int n=1,d,j;
-	lTree *ladoE, *ladoD, *auxC;
-	for(auxC = corden;auxC!=NULL;auxC = auxC->prox)
-		n++;
-	d = n/2;	
-	if(n!=1&&d>1)
-	{
-		auxC = corden;
-		for(j=1;j<d;j++)
-		{
-			inserePont(&ladoE, auxC->cord[0],auxC->cord[1]);
-			auxC = auxC ->prox;
-		}
-		insereKdTree(&*raiz,auxC->cord,0);
-		for(j=j+1;j<=n;j++)
-		{
-			inserePont(&ladoD, auxC->cord[0],auxC->cord[1]);
-			auxC = auxC ->prox;
-		}
-		ordenaList(&ladoE,a);
-		ordenaList(&ladoE,a);
-	}
+	int i;
+	static int n = -1;
+	if( a==NULL) return;
+	n++;
+	exibeArv(a->dir);
+	for(i=0; i<5*n;i++) printf("  ");
+	printf(" (%d,%d)\n\n",a->cord[0],a->cord[1]);
+	exibeArv(a->esq);
+	n--;
 }
+

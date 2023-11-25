@@ -1,12 +1,13 @@
 #include<stdio.h>
 #include<conio2.h>
 #include<stdlib.h>
-#include"TADKDTREE.h"
+#include"TADKDTREE.h" 
 
 int main()
 {
-	kdTree *arv=NULL;
-	int i[2] = {4,5},j[2]={8,9};
-	lTree *alePonts=NULL,*exibe;
-	geraPontos(&alePonts,20);	
+	kdTree *arv=NULL; //declarando arvore
+	lTree *alePonts=NULL; //declarando lista de pontos
+	geraPontos(&alePonts,20); //gerando pontos
+	insertBalancedKdTree(&arv,alePonts,0); //inserindo na arvore de forma balanceada
+	exibeArv(arv); // exibindo a arvore deitada
 }
