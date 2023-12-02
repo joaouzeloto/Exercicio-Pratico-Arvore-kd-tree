@@ -199,7 +199,6 @@ void insertBalancedKdTree(kdTree **raiz,lTree *l,int n)
 			*raiz = Cria_no(meio->cord);
 		}
 		d = n%TF;
-		printf("\n%d,%d",d,tam);
 		inserePontD(l,&ladoE,meio,d); // insere o número restante de pontos da esquerda em outra lista
 		inserePontD(meio->prox,&ladoD,NULL,d); // insere o número restante de pontos da direita em outra lista
 		insertBalancedKdTree(&(*raiz)->esq,ladoE,n+1); // chama a função passando o lado esquerdo 
@@ -212,17 +211,18 @@ void insertBalancedKdTree(kdTree **raiz,lTree *l,int n)
 	}
 }
 
-void exibeArv(kdTree *a)
+void exibeArv(kdTree *a,int n)
 {
 	int i;
-	static int n = -1;
-	if( a==NULL) return;
-	n++;
-	exibeArv(a->dir);
-	for(i=0; i<5*n;i++) printf("  ");
-	printf(" (%d,%d)\n\n",a->cord[0],a->cord[1]);
-	exibeArv(a->esq);
-	n--;
+	if( a!=NULL)
+	{
+		n++;
+		exibeArv(a->dir,n);
+		for(i=0; i<5*n;i++) printf("  ");
+		printf("(%d,%d)\n\n",a->cord[0],a->cord[1]);
+		exibeArv(a->esq,n);
+		n--;
+	}
 }
 
 int medeDistancia(kdTree *kd,int cord[],int n)
