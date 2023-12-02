@@ -64,7 +64,7 @@ void insereOrdD(lTree **a,lTree *cop,int d)
 	}
 	else
 	{
-		while(aux!=NULL&&aux->cord[d]<novo->cord[d])
+		while(aux!=NULL&&aux->cord[d]>novo->cord[d])
 		{
 			anterior = aux;
 			aux = aux->prox;
@@ -199,10 +199,11 @@ void insertBalancedKdTree(kdTree **raiz,lTree *l,int n)
 			*raiz = Cria_no(meio->cord);
 		}
 		d = n%TF;
+		printf("\n%d,%d",d,tam);
 		inserePontD(l,&ladoE,meio,d); // insere o número restante de pontos da esquerda em outra lista
 		inserePontD(meio->prox,&ladoD,NULL,d); // insere o número restante de pontos da direita em outra lista
-		insertBalancedKdTree(&(*raiz)->esq,ladoE,n+1); 
-		insertBalancedKdTree(&(*raiz)->dir,ladoD,n+1);
+		insertBalancedKdTree(&(*raiz)->esq,ladoE,n+1); // chama a função passando o lado esquerdo 
+		insertBalancedKdTree(&(*raiz)->dir,ladoD,n+1); // chama a função chamando o lado direito
 	}
 	else
 	{
@@ -258,9 +259,9 @@ void exibe(lTree *l)
 	int i;
 	if(l!=NULL)
 	{
-		printf("\n(");
-		for(i=0;i<=TF-1;i++)
-			printf("%d,",l->cord[i]);
+		printf("\n(%d",l->cord[0]);
+		for(i=1;i<TF;i++)
+			printf(",%d",l->cord[i]);
 		printf(")");
 		exibe(l->prox);
 	}
