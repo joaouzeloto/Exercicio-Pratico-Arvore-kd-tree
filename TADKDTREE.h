@@ -15,7 +15,7 @@ struct kdtree
 typedef struct kdtree kdTree;
 
 int sortearNumero() {
-    int numeroAleatorio = rand() % 600;
+    int numeroAleatorio = rand() % 50;
 	return numeroAleatorio;
 }
 
@@ -92,6 +92,21 @@ void insereOrdD(lTree **a,lTree *cop,int d)
 		}	
 	}
 	
+}
+
+void insereLKD(lTree **l,kdTree *kd)
+{
+	lTree *novo = (lTree*) malloc(sizeof(lTree));
+	int i;
+	for(i=0;i<TF;i++)
+		novo->cord[i] = kd->cord[i];
+	if(*l==NULL)
+		*l = novo;
+	else
+	{
+		novo->prox = *l;
+		*l = novo;
+	}
 }
 
 void inserePontD(lTree *l,lTree **ori,lTree *limite,int d)
@@ -207,5 +222,47 @@ void exibeArv(kdTree *a)
 	printf(" (%d,%d)\n\n",a->cord[0],a->cord[1]);
 	exibeArv(a->esq);
 	n--;
+}
+
+int medeDistancia(kdTree *kd,int cord[],int n)
+{
+	int i;
+	double f=0,d;
+	for(i=0;i<TF;i++)
+	{
+		d = (kd->cord[i])-cord[i];
+		d = pow(d,2);
+		f = f + d;
+	}
+	if(sqrt(f) <= n)
+	{
+		return 1;	
+	}
+	else
+		return 0;
+}
+
+void distanciaEuclidiana(lTree **l,kdTree *kd,int cord[],int n)
+{
+	if(kd!=NULL)
+	{
+		if(medeDistancia(kd,cord,n)==1)
+			insereLKD(*&l,kd);
+		distanciaEuclidiana(*&l,kd->esq,cord,n);
+		distanciaEuclidiana(*&l,kd->dir,cord,n);
+	}
+}
+
+void exibe(lTree *l)
+{
+	int i;
+	if(l!=NULL)
+	{
+		printf("\n(");
+		for(i=0;i<=TF-1;i++)
+			printf("%d,",l->cord[i]);
+		printf(")");
+		exibe(l->prox);
+	}
 }
 
